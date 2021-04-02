@@ -1,0 +1,22 @@
+{"intents": [
+  {"tag":  "greetings",
+  "patterns":  ["hello", "hey", "hi", "good day", "greetings", "what's up?","how is it going?"],
+  "responses":  ["Hello!", "Hey!", "What can I do for you?"]
+  },
+  {"tag":  "goodbye",
+  "patterns":  ["cya", "see you later", "goodbye", "I am leaving", "have a good day", "later"],
+  "responses":  ["Byee!", "Come back soon!", "Until next time."]
+  },
+  {"tag":  "shop",
+  "patterns":  ["what are your products", "What do you sell"],
+  "responses":  ["We sell (YOUR PRODUCT(S) HERE)"]
+  },
+  {"tag":  "hours",
+  "patterns":  ["When are you open?", "what time do you open", "what are your hours"],
+  "responses":  ["We're open 24/7"]
+  },
+  {"tag":  "name",
+  "patterns":  ["What's your name", "who are you", "how should I call you"],
+  "responses":  ["My name is (YOUR CUSTOM NAME)"]
+  }
+]}
