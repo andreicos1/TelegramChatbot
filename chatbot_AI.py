@@ -6,14 +6,14 @@ import numpy as np
 import nltk
 from nltk.stem import WordNetLemmatizer
 
-from tensorflow.keras.models import load_model
+from joblib import load
 
 lemmatizer = WordNetLemmatizer() #init lemmatizer
 intents = json.loads(open('intents.json').read()) #open the intents file
 # Open the words and classes files
 words = pickle.load(open('words.pkl', 'rb'))
 classes = pickle.load(open('classes.pkl', 'rb'))
-model = load_model("chatbot_model.model") # load the trained model
+model = load("chatbot_model.joblib") # load the trained model
 
 def clean_up_sentence(sentence):
     '''Clean up the user input before it can be identified by the model'''
@@ -38,29 +38,14 @@ def predict_class(sentence):
     ''' Predict the class of the user input '''
     bow = bag_of_words(sentence)
     res = model.predict(np.array([bow]))[0] #predict the class
-    # Get all classes with p >25%
-    ERROR_THRESHOLD = .25
-    results =[[i, r] for i, r in enumerate(res) if r > ERROR_THRESHOLD]
+    return res
 
-    # Sort the results by highest probability first
-    results.sort(key=lambda a: a[1], reverse=True)
-    return_list = []
-    for r in results:
-        return_list.append({'intent': classes[r[0]], 'probability': str(r[1])})
-    return return_list
-
-def get_response(intents_list, intents_json):
-    ''' Using the predicted, class, output a response
-     Takes the prediction output (A WHAT?) and the json dictionary as input
+def get_response(intent, intents_json):
+    ''' Using the predicted class, output a random response
+     Takes the prediction output and the json dictionary as input
      '''
-    tag = intents_list[0]['intent'] # get the top predicted intent
-    list_of_intents = intents_json['intents'] #get the intents dictionary
-    for i in list_of_intents:
-        # Find the predicted tag
-        if i['tag'] == tag:
-            # Pick a random response
-            result = random.choice(i['responses'])
-            return result
+    possible_replies = intents_json['intents'][intent]['responses']
+    return random.choice(possible_replies)
 
 def test_bot():
     ''' This function is used to test the bot '''
@@ -69,8 +54,8 @@ def test_bot():
         message = input("")
         if message.lower()=='exit': #simple way to exit the program
             return "Test ended."
-        ints = predict_class(message) #get the intent
-        res = get_response(ints, intents) #get the response
+        intent = predict_class(message) #get the intent
+        res = get_response(intent, intents) #get the response
         print(res) #output it to the console
 
 if __name__ == '__main__':
